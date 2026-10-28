@@ -1,0 +1,80 @@
+---
+import { numberFacts } from "@/data/site";
+---
+
+<section class="relative isolate overflow-hidden bg-[#0d0f10] py-16 text-white md:py-24" id="sayilarla-biz">
+	<div class="shell">
+		<div class="flex flex-col gap-4 border-b border-white/10 pb-10 md:flex-row md:items-end md:justify-between" data-reveal>
+			<div>
+				<p class="font-mono text-[10px] uppercase tracking-[0.2em] text-primary">Sayılarla biz</p>
+				<h2 class="mt-4 max-w-xl text-3xl font-black uppercase leading-tight tracking-tight text-white sm:text-4xl lg:text-5xl">
+					Rakamların anlattığı tablo.
+				</h2>
+			</div>
+			<p class="max-w-sm text-sm leading-relaxed text-white/60">
+				WuppyCMS'i seçen ekiplerin en çok önemsediği dört başlık: hız, şeffaflık, kapsam ve
+				bağımsızlık.
+			</p>
+		</div>
+
+		<div class="stats-band mt-12 grid grid-cols-2 gap-px border border-white/10 bg-white/10 md:grid-cols-4">
+			{
+				numberFacts.map((fact, i) => (
+					<div class="group relative bg-[#0d0f10] p-6 transition-colors hover:bg-[#111415] sm:p-8">
+						<span class="font-mono text-[10px] uppercase tracking-[0.18em] text-white/35">
+							{String(i + 1).padStart(2, "0")}
+						</span>
+						<div class="mt-6 flex items-baseline text-4xl font-black tracking-[-0.04em] text-white transition-colors group-hover:text-primary sm:text-5xl lg:text-6xl">
+							<span class="countup-num" data-target={fact.target}>0</span>
+							{fact.suffix && <span class="text-primary">{fact.suffix}</span>}
+						</div>
+						<div class="mt-4 h-0.5 w-8 bg-primary transition-all duration-300 group-hover:w-14" />
+						<h3 class="mt-4 text-xs font-black uppercase tracking-[0.14em] text-white sm:text-[13px]">
+							{fact.label}
+						</h3>
+						<p class="mt-2 text-xs leading-relaxed text-white/55">{fact.description}</p>
+					</div>
+				))
+			}
+		</div>
+	</div>
+</section>
+
+<script>
+	const initStatsBand = () => {
+		const band = document.querySelector(".stats-band");
+		if (!band) return;
+		const nums = band.querySelectorAll<HTMLElement>(".countup-num");
+		if (!nums.length) return;
+
+		const animate = (el: HTMLElement) => {
+			const target = Number(el.dataset.target || "0");
+			const duration = 1400;
+			const start = performance.now();
+			const tick = (now: number) => {
+				const progress = Math.min((now - start) / duration, 1);
+				const eased = 1 - Math.pow(1 - progress, 3);
+				el.textContent = String(Math.round(target * eased));
+				if (progress < 1) requestAnimationFrame(tick);
+			};
+			requestAnimationFrame(tick);
+		};
+
+		let done = false;
+		const observer = new IntersectionObserver(
+			(entries) => {
+				entries.forEach((entry) => {
+					if (!entry.isIntersecting || done) return;
+					done = true;
+					nums.forEach(animate);
+					observer.disconnect();
+				});
+			},
+			{ threshold: 0.25 },
+		);
+		observer.observe(band);
+	};
+
+	initStatsBand();
+	document.addEventListener("astro:page-load", initStatsBand);
+</script>
