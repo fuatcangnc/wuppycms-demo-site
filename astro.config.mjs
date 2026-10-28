@@ -32,6 +32,8 @@ const fonts = [
 	},
 ];
 
+const previewMode = process.env.REEYAI_PREVIEW === "1";
+
 export default defineConfig({
 	devToolbar: { enabled: false },
 	build: { inlineStylesheets: "always" },
@@ -46,6 +48,9 @@ export default defineConfig({
 		}),
 	],
 	vite: {
+		// Yerel ajan önizlemesi: HMR kapalı; widget main'i yumuşak yeniler.
+		// Normal geliştirmede HMR açık kalır.
+		...(previewMode ? { server: { hmr: false } } : {}),
 		resolve: {
 			alias: {
 				"@": decodeURIComponent(new URL("./src", import.meta.url).pathname),

@@ -8,7 +8,8 @@
 // Protokol (postMessage):
 //   parent → site : reeyai:hello | reeyai:pick-mode {on} | reeyai:unpick {path,label}
 //                   reeyai:place {path,label,position,scroll} | reeyai:skeleton {path,label,position}
-//                   reeyai:skeleton-clear | reeyai:reload | reeyai:back | reeyai:forward
+//                   reeyai:skeleton-clear | reeyai:soft-refresh {path,requestId}
+//                   reeyai:reload | reeyai:back | reeyai:forward
 //   site → parent : reeyai:ready | reeyai:pick {selection} | reeyai:page {path,title}
 //                   reeyai:navigate {href}
 ---
@@ -110,15 +111,17 @@
 			style.textContent =
 				"html.reeyai-picking,html.reeyai-picking *{cursor:crosshair !important}" +
 				"[data-reeyai-picked]{outline:2px solid #dd641e !important;outline-offset:2px}" +
-				"@keyframes reeyai-shimmer{0%{background-position:-480px 0}100%{background-position:480px 0}}" +
-				"@keyframes reeyai-spin{to{transform:rotate(360deg)}}" +
+				"@keyframes reeyai-pulse{0%,100%{opacity:.55}50%{opacity:1}}" +
 				".reeyai-insert-marker{position:relative;height:0;border-top:3px solid #dd641e;margin:5px 0;pointer-events:none;z-index:2147483000}" +
 				".reeyai-insert-marker>span{position:absolute;right:0;top:-11px;background:#dd641e;color:#fff;font:800 9px/1.5 ui-sans-serif,system-ui;letter-spacing:.08em;text-transform:uppercase;padding:1px 6px;white-space:nowrap}" +
-				".reeyai-insert-skeleton{position:relative;box-sizing:border-box;width:100%;min-height:190px;margin:10px 0;border:1px dashed rgba(221,100,30,.55);background:linear-gradient(90deg,#f6f6f6 25%,#ececec 37%,#f6f6f6 63%);background-size:480px 100%;animation:reeyai-shimmer 1.3s linear infinite;display:flex;align-items:center;justify-content:center;z-index:1;pointer-events:none}" +
-				".reeyai-insert-skeleton__inner{display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px;text-align:center}" +
-				".reeyai-insert-skeleton__spinner{display:inline-block;width:30px;height:30px;border:2px solid #dd641e;border-top-color:transparent;border-radius:999px;animation:reeyai-spin .8s linear infinite}" +
-				".reeyai-insert-skeleton__title{font:800 11px/1.4 ui-sans-serif,system-ui;letter-spacing:.12em;text-transform:uppercase;color:#dd641e}" +
-				".reeyai-insert-skeleton__hint{font:500 10px/1.5 ui-sans-serif,system-ui;color:#737373}";
+				".reeyai-insert-skeleton{position:relative;box-sizing:border-box;width:100%;min-height:170px;margin:10px 0;border:1px solid #e5e5e5;border-top:3px solid #dd641e;background:#fafafa;padding:18px;z-index:1;pointer-events:none}" +
+				".reeyai-insert-skeleton__head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;font:800 10px/1.4 ui-sans-serif,system-ui;letter-spacing:.12em;text-transform:uppercase;color:#dd641e}" +
+				".reeyai-insert-skeleton__dot{display:inline-block;width:6px;height:6px;margin-right:6px;background:#dd641e;vertical-align:1px}" +
+				".reeyai-insert-skeleton__line{height:10px;margin-top:10px;background:#e5e5e5;animation:reeyai-pulse 1.6s ease-in-out infinite}" +
+				".reeyai-insert-skeleton__line--title{height:18px;width:58%;background:#d4d4d4}" +
+				".reeyai-insert-skeleton__line--wide{width:92%}" +
+				".reeyai-insert-skeleton__line--mid{width:76%;animation-delay:.15s}" +
+				".reeyai-insert-skeleton__hint{margin-top:14px;font:500 10px/1.5 ui-sans-serif,system-ui;color:#737373}";
 			document.head.appendChild(style);
 			overlay = document.createElement("div");
 			overlay.style.cssText =
@@ -181,18 +184,25 @@
 			skeleton.setAttribute("data-reeyai-skeleton", "");
 			skeleton.setAttribute("role", "status");
 			skeleton.setAttribute("aria-label", "AI yeni bölüm hazırlıyor");
-			const inner = document.createElement("div");
-			inner.className = "reeyai-insert-skeleton__inner";
-			const spinner = document.createElement("span");
-			spinner.className = "reeyai-insert-skeleton__spinner";
-			const title = document.createElement("span");
-			title.className = "reeyai-insert-skeleton__title";
-			title.textContent = typeof message === "string" && message.trim() ? message : "Yeni bölüm hazırlanıyor";
-			const hint = document.createElement("span");
+			const head = document.createElement("div");
+			head.className = "reeyai-insert-skeleton__head";
+			const headLabel = document.createElement("span");
+			const dot = document.createElement("span");
+			dot.className = "reeyai-insert-skeleton__dot";
+			headLabel.append(dot, document.createTextNode(typeof message === "string" && message.trim() ? message : "Yeni bölüm hazırlanıyor"));
+			const aiTag = document.createElement("span");
+			aiTag.textContent = "AI";
+			head.append(headLabel, aiTag);
+			const titleLine = document.createElement("div");
+			titleLine.className = "reeyai-insert-skeleton__line reeyai-insert-skeleton__line--title";
+			const wideLine = document.createElement("div");
+			wideLine.className = "reeyai-insert-skeleton__line reeyai-insert-skeleton__line--wide";
+			const midLine = document.createElement("div");
+			midLine.className = "reeyai-insert-skeleton__line reeyai-insert-skeleton__line--mid";
+			const hint = document.createElement("div");
 			hint.className = "reeyai-insert-skeleton__hint";
 			hint.textContent = "Değişiklik tamamlanınca burada görünecek.";
-			inner.append(spinner, title, hint);
-			skeleton.appendChild(inner);
+			skeleton.append(head, titleLine, wideLine, midLine, hint);
 			if (!target) {
 				(document.querySelector("main") ?? document.body).appendChild(skeleton);
 				skeleton.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -201,6 +211,63 @@
 			if (position === "before") target.before(skeleton);
 			else target.after(skeleton);
 			target.scrollIntoView({ behavior: "smooth", block: "center" });
+		};
+
+		const softRefresh = async (path, requestId) => {
+			const ack = (ok) => post({ type: "reeyai:soft-refreshed", requestId, ok: Boolean(ok) });
+			try {
+				const currentMain = document.querySelector("main");
+				if (!currentMain) throw new Error("no-main");
+				const currentTitle = document.title;
+				let nextDoc = null;
+				let nextMain = null;
+				for (let attempt = 0; attempt < 8; attempt += 1) {
+					const res = await fetch(location.href, { cache: "no-store", credentials: "same-origin" });
+					if (!res.ok) throw new Error("fetch");
+					nextDoc = new DOMParser().parseFromString(await res.text(), "text/html");
+					nextMain = nextDoc.querySelector("main");
+					if (nextMain && nextMain.innerHTML !== currentMain.innerHTML) break;
+					await new Promise((resolve) => setTimeout(resolve, 500));
+				}
+				if (!nextDoc || !nextMain) throw new Error("no-main");
+				const shellOf = (doc, selector) => doc.querySelector(selector)?.outerHTML ?? "";
+				if (
+					shellOf(nextDoc, "header") !== shellOf(document, "header") ||
+					shellOf(nextDoc, "footer") !== shellOf(document, "footer") ||
+					nextDoc.title !== currentTitle
+				) {
+					throw new Error("shell-changed");
+				}
+				const scroll = window.scrollY;
+				const oldStyles = Array.from(document.querySelectorAll("style[data-vite-dev-id]"));
+				nextDoc.querySelectorAll("style[data-vite-dev-id]").forEach((style) => {
+					document.head.appendChild(document.importNode(style, true));
+				});
+				oldStyles.forEach((style) => style.remove());
+				const existingLinks = new Set(
+					Array.from(document.querySelectorAll('link[rel="stylesheet"]')).map((link) => link.getAttribute("href")),
+				);
+				nextDoc.querySelectorAll('link[rel="stylesheet"]').forEach((link) => {
+					if (link.getAttribute("href") && !existingLinks.has(link.getAttribute("href"))) {
+						document.head.appendChild(document.importNode(link, true));
+					}
+				});
+				clearInsertion();
+				currentMain.replaceWith(document.importNode(nextMain, true));
+				let target = null;
+				if (path) {
+					try {
+						target = document.querySelector(path);
+					} catch {
+						target = null;
+					}
+				}
+				if (target) target.scrollIntoView({ behavior: "smooth", block: "center" });
+				else window.scrollTo(0, scroll);
+				ack(true);
+			} catch {
+				ack(false);
+			}
 		};
 
 		const onMove = (event) => {
@@ -317,6 +384,10 @@
 			}
 			if (data.type === "reeyai:skeleton-clear") {
 				clearInsertion();
+				return;
+			}
+			if (data.type === "reeyai:soft-refresh") {
+				void softRefresh(typeof data.path === "string" ? data.path : null, data.requestId);
 				return;
 			}
 			if (data.type === "reeyai:reload") {
