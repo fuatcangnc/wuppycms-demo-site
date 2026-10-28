@@ -169,7 +169,7 @@
 			marker.className = "reeyai-insert-marker";
 			marker.setAttribute("data-reeyai-place", "");
 			const tag = document.createElement("span");
-			tag.textContent = position === "before" ? "Buradan önce" : "Buradan sonra";
+			tag.textContent = position === "before" ? "Insert before" : "Insert after";
 			marker.appendChild(tag);
 			if (position === "before") target.before(marker);
 			else target.after(marker);
@@ -183,7 +183,7 @@
 			skeleton.className = "reeyai-insert-skeleton";
 			skeleton.setAttribute("data-reeyai-skeleton", "");
 			skeleton.setAttribute("role", "status");
-			skeleton.setAttribute("aria-label", "AI yeni bölüm hazırlıyor");
+			skeleton.setAttribute("aria-label", "AI is preparing a new section");
 			if (target) {
 				const rect = target.getBoundingClientRect();
 				skeleton.style.width = `${Math.max(80, Math.round(rect.width))}px`;
@@ -197,7 +197,7 @@
 			const headLabel = document.createElement("span");
 			const dot = document.createElement("span");
 			dot.className = "reeyai-insert-skeleton__dot";
-			headLabel.append(dot, document.createTextNode(typeof message === "string" && message.trim() ? message : "Yeni bölüm hazırlanıyor"));
+			headLabel.append(dot, document.createTextNode(typeof message === "string" && message.trim() ? message : "Preparing new section"));
 			const aiTag = document.createElement("span");
 			aiTag.textContent = "AI";
 			head.append(headLabel, aiTag);
@@ -209,7 +209,7 @@
 			midLine.className = "reeyai-insert-skeleton__line reeyai-insert-skeleton__line--mid";
 			const hint = document.createElement("div");
 			hint.className = "reeyai-insert-skeleton__hint";
-			hint.textContent = "Değişiklik tamamlanınca burada görünecek.";
+			hint.textContent = "It will appear here when ready.";
 			skeleton.append(head, titleLine, wideLine, midLine, hint);
 			if (!target) {
 				(document.querySelector("main") ?? document.body).appendChild(skeleton);
