@@ -9,26 +9,45 @@ const posts = (await getCollection("blog", ({ data }) => !data.draft)).sort(
 ---
 
 <Base title="Blog">
-	<ul class="mt-10 space-y-8">
-		{
-			posts.map((post) => (
-				<li data-reeyai-content={JSON.stringify({ collection: "blog", slug: post.id })}>
-					<a
-						href={`/blog/${post.id}`}
-						class="text-xl font-semibold hover:underline"
-						data-reeyai-field="title"
+	<section class="max-w-2xl">
+		<p class="text-xs font-medium uppercase tracking-[0.2em] text-primary">WuppyCMS</p>
+		<h1 class="mt-3 text-4xl font-semibold tracking-tight">Blog</h1>
+		<p class="mt-3 text-lg leading-relaxed text-muted-foreground">
+			İçeriği GitHub reposunda yaşayan Astro sitesi.
+		</p>
+	</section>
+
+	<section id="posts" class="mt-section">
+		<div class="flex items-baseline justify-between gap-3">
+			<h2 class="text-2xl font-semibold tracking-tight">Yazılar</h2>
+			<span class="text-xs text-muted-foreground">{posts.length} yazı</span>
+		</div>
+		<ul class="mt-block space-y-4">
+			{
+				posts.map((post) => (
+					<li
+						data-reeyai-content={JSON.stringify({ collection: "blog", slug: post.id })}
+						class="rounded-xl border border-border bg-card p-5"
 					>
-						{post.data.title}
-					</a>
-					<p class="mt-1 text-sm text-zinc-500">
-						{post.data.pubDate.toISOString().slice(0, 10)}
-						{post.data.tags.length > 0 && <> · {post.data.tags.join(", ")}</>}
-					</p>
-					<p class="mt-1 text-zinc-300" data-reeyai-field="description">{post.data.description}</p>
-				</li>
-			))
-		}
+						<a
+							href={`/blog/${post.id}`}
+							class="text-xl font-semibold tracking-tight hover:text-primary hover:underline"
+							data-reeyai-field="title"
+						>
+							{post.data.title}
+						</a>
+						<p class="mt-1 text-xs text-muted-foreground">
+							{post.data.pubDate.toISOString().slice(0, 10)}
+							{post.data.tags.length > 0 && <> · {post.data.tags.join(", ")}</>}
+						</p>
+						<p class="mt-2 text-sm leading-relaxed text-muted-foreground" data-reeyai-field="description">
+							{post.data.description}
+						</p>
+					</li>
+				))
+			}
 		</ul>
+	</section>
 
 	<About />
 </Base>

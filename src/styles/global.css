@@ -1,2 +1,61 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
+
+/* WuppyCMS site tasarım tokenları — tek doğruluk kaynağı bu dosyadır.
+   Ayrıntı: DESIGN_SYSTEM.md. Bileşenlerde hex/renk gömülmez. */
+@theme {
+	--font-sans: ui-sans-serif, system-ui, sans-serif;
+	--font-mono: ui-monospace, SFMono-Regular, monospace;
+	--font-heading: ui-sans-serif, system-ui, sans-serif;
+
+	--color-background: oklch(0.16 0.004 260);
+	--color-foreground: oklch(0.97 0.003 260);
+	--color-card: oklch(0.205 0.005 260);
+	--color-card-foreground: oklch(0.97 0.003 260);
+	--color-popover: oklch(0.205 0.005 260);
+	--color-popover-foreground: oklch(0.97 0.003 260);
+	--color-muted: oklch(0.27 0.005 260);
+	--color-muted-foreground: oklch(0.72 0.005 260);
+	--color-accent: oklch(0.32 0.015 260);
+	--color-accent-foreground: oklch(0.97 0.003 260);
+	--color-secondary: oklch(0.27 0.005 260);
+	--color-secondary-foreground: oklch(0.97 0.003 260);
+
+	--color-primary: oklch(0.5772 0.2324 260);
+	--color-primary-foreground: oklch(0.977 0.013 260);
+	--color-destructive: oklch(0.62 0.21 25);
+	--color-border: oklch(1 0 0 / 12%);
+	--color-input: oklch(1 0 0 / 16%);
+	--color-ring: oklch(0.62 0.12 260);
+
+	--radius-sm: 0.375rem;
+	--radius-md: 0.5rem;
+	--radius-lg: 0.625rem;
+	--radius-xl: 0.875rem;
+	--radius-2xl: 1.125rem;
+
+	--spacing-gutter: 1rem;
+	--spacing-block: 1.5rem;
+	--spacing-section: 6rem;
+	--spacing-hero: 7rem;
+}
+
+:root {
+	color-scheme: dark;
+	--button-primary-ring: color-mix(in oklch, var(--color-primary), black 10%);
+	--button-primary-gloss: color-mix(in oklch, var(--color-primary), white 30%);
+	--button-primary-grad-top: color-mix(in oklch, var(--color-primary), white 15%);
+	--button-primary-grad-bottom: var(--color-primary);
+	--button-primary-grad-top-hover: color-mix(in oklch, var(--color-primary), white 30%);
+	--button-danger-ring: color-mix(in oklch, var(--color-destructive), black 10%);
+	--button-danger-gloss: color-mix(in oklch, var(--color-destructive), white 30%);
+	--button-danger-grad-top: color-mix(in oklch, var(--color-destructive), white 15%);
+	--button-danger-grad-bottom: var(--color-destructive);
+	--button-danger-grad-top-hover: color-mix(in oklch, var(--color-destructive), white 30%);
+}
+
+@layer base {
+	html { @apply font-sans; scroll-behavior: smooth; }
+	body { @apply bg-background text-foreground antialiased; }
+	::selection { @apply bg-primary/30 text-foreground; }
+}
