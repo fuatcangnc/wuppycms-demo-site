@@ -343,7 +343,7 @@
 					document.addEventListener("click", onClick, true);
 					active = true;
 				}
-				post({ type: "reeyai:ready" });
+				post({ type: "reeyai:ready", capabilities: { softRefresh: true, skeleton: true } });
 				post({ type: "reeyai:page", path: location.pathname, title: document.title });
 				return;
 			}
