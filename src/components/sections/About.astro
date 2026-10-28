@@ -1,0 +1,32 @@
+---
+interface Props {
+	title?: string;
+	description?: string;
+	highlights?: { label: string; value: string }[];
+}
+
+const {
+	title = "Hakkımızda",
+	description = "Biz, fikirleri hızlıca ürüne dönüştüren küçük ve odaklı bir ekibiz. Astro ve modern web araçlarıyla sade, hızlı ve erişilebilir deneyimler kuruyoruz.",
+	highlights = [
+		{ label: "Proje", value: "120+" },
+		{ label: "Deneyim", value: "8 yıl" },
+		{ label: "Ekip", value: "6 kişi" },
+	],
+} = Astro.props;
+---
+
+<section class="mt-12" data-reeyai-section="hakkimizda">
+	<h2 class="text-2xl font-semibold tracking-tight" data-reeyai-field="title">{title}</h2>
+	<p class="mt-4 leading-relaxed text-zinc-300" data-reeyai-field="description">{description}</p>
+	<dl class="mt-8 grid gap-4 sm:grid-cols-3">
+		{
+			highlights.map((item) => (
+				<div class="rounded-lg border border-zinc-800 p-4">
+					<dt class="text-xs uppercase tracking-wide text-zinc-500">{item.label}</dt>
+					<dd class="mt-1 text-lg font-semibold">{item.value}</dd>
+				</div>
+			))
+		}
+	</dl>
+</section>
