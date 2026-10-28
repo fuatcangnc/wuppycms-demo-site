@@ -114,7 +114,7 @@
 				"@keyframes reeyai-pulse{0%,100%{opacity:.55}50%{opacity:1}}" +
 				".reeyai-insert-marker{position:relative;height:0;border-top:3px solid #dd641e;margin:5px 0;pointer-events:none;z-index:2147483000}" +
 				".reeyai-insert-marker>span{position:absolute;right:0;top:-11px;background:#dd641e;color:#fff;font:800 9px/1.5 ui-sans-serif,system-ui;letter-spacing:.08em;text-transform:uppercase;padding:1px 6px;white-space:nowrap}" +
-				".reeyai-insert-skeleton{position:relative;box-sizing:border-box;width:100%;min-height:170px;margin:10px 0;border:1px solid #e5e5e5;border-top:3px solid #dd641e;background:#fafafa;padding:18px;z-index:1;pointer-events:none}" +
+				".reeyai-insert-skeleton{position:relative;box-sizing:border-box;width:100%;margin:10px 0;border:1px solid #e5e5e5;border-top:3px solid #dd641e;background:#fafafa;padding:18px;z-index:1;pointer-events:none;overflow:hidden}" +
 				".reeyai-insert-skeleton__head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;font:800 10px/1.4 ui-sans-serif,system-ui;letter-spacing:.12em;text-transform:uppercase;color:#dd641e}" +
 				".reeyai-insert-skeleton__dot{display:inline-block;width:6px;height:6px;margin-right:6px;background:#dd641e;vertical-align:1px}" +
 				".reeyai-insert-skeleton__line{height:10px;margin-top:10px;background:#e5e5e5;animation:reeyai-pulse 1.6s ease-in-out infinite}" +
@@ -184,6 +184,14 @@
 			skeleton.setAttribute("data-reeyai-skeleton", "");
 			skeleton.setAttribute("role", "status");
 			skeleton.setAttribute("aria-label", "AI yeni bölüm hazırlıyor");
+			if (target) {
+				const rect = target.getBoundingClientRect();
+				skeleton.style.width = `${Math.max(80, Math.round(rect.width))}px`;
+				skeleton.style.height = `${Math.max(56, Math.round(rect.height))}px`;
+				skeleton.style.maxWidth = "100%";
+			} else {
+				skeleton.style.minHeight = "170px";
+			}
 			const head = document.createElement("div");
 			head.className = "reeyai-insert-skeleton__head";
 			const headLabel = document.createElement("span");
