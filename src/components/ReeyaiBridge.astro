@@ -1,5 +1,5 @@
 ---
-// ReeyAI önizleme köprüsü (ADR 0008).
+// WuppyCMS önizleme köprüsü (ADR 0008).
 //
 // Bu betik yalnızca sayfa bir üst pencereye gömülüyken ve üst pencere
 // `reeyai:hello` gönderdiğinde etkinleşir. Normal ziyaretçi için hiçbir şey
@@ -7,7 +7,8 @@
 //
 // Protokol (postMessage):
 //   parent → site : reeyai:hello | reeyai:pick-mode {on} | reeyai:unpick {path,label}
-//                   reeyai:reload | reeyai:back | reeyai:forward
+//                   reeyai:place {path,label,position,scroll} | reeyai:skeleton {path,label,position}
+//                   reeyai:skeleton-clear | reeyai:reload | reeyai:back | reeyai:forward
 //   site → parent : reeyai:ready | reeyai:pick {selection} | reeyai:page {path,title}
 //                   reeyai:navigate {href}
 ---
@@ -23,6 +24,8 @@
 		let current = null;
 		/** path+label → seçilmiş element (kaldırma için). */
 		const picked = new Map();
+		let marker = null;
+		let skeleton = null;
 
 		const post = (message) => {
 			try {
@@ -106,7 +109,16 @@
 			const style = document.createElement("style");
 			style.textContent =
 				"html.reeyai-picking,html.reeyai-picking *{cursor:crosshair !important}" +
-				"[data-reeyai-picked]{outline:2px solid #4f8cff !important;outline-offset:2px}";
+				"[data-reeyai-picked]{outline:2px solid #dd641e !important;outline-offset:2px}" +
+				"@keyframes reeyai-shimmer{0%{background-position:-480px 0}100%{background-position:480px 0}}" +
+				"@keyframes reeyai-spin{to{transform:rotate(360deg)}}" +
+				".reeyai-insert-marker{position:relative;height:0;border-top:3px solid #dd641e;margin:5px 0;pointer-events:none;z-index:2147483000}" +
+				".reeyai-insert-marker>span{position:absolute;right:0;top:-11px;background:#dd641e;color:#fff;font:800 9px/1.5 ui-sans-serif,system-ui;letter-spacing:.08em;text-transform:uppercase;padding:1px 6px;white-space:nowrap}" +
+				".reeyai-insert-skeleton{position:relative;box-sizing:border-box;width:100%;min-height:190px;margin:10px 0;border:1px dashed rgba(221,100,30,.55);background:linear-gradient(90deg,#f6f6f6 25%,#ececec 37%,#f6f6f6 63%);background-size:480px 100%;animation:reeyai-shimmer 1.3s linear infinite;display:flex;align-items:center;justify-content:center;z-index:1;pointer-events:none}" +
+				".reeyai-insert-skeleton__inner{display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px;text-align:center}" +
+				".reeyai-insert-skeleton__spinner{display:inline-block;width:30px;height:30px;border:2px solid #dd641e;border-top-color:transparent;border-radius:999px;animation:reeyai-spin .8s linear infinite}" +
+				".reeyai-insert-skeleton__title{font:800 11px/1.4 ui-sans-serif,system-ui;letter-spacing:.12em;text-transform:uppercase;color:#dd641e}" +
+				".reeyai-insert-skeleton__hint{font:500 10px/1.5 ui-sans-serif,system-ui;color:#737373}";
 			document.head.appendChild(style);
 			overlay = document.createElement("div");
 			overlay.style.cssText =
@@ -119,6 +131,76 @@
 				"white-space:nowrap;max-width:260px;overflow:hidden";
 			overlay.appendChild(overlayTag);
 			document.documentElement.appendChild(overlay);
+		};
+
+		const targetFor = (path, label) => {
+			const selected = picked.get(`${path}|${label}`);
+			if (selected && selected.isConnected) return selected;
+			try {
+				return document.querySelector(path);
+			} catch {
+				return null;
+			}
+		};
+
+		const clearMarker = () => {
+			if (marker) marker.remove();
+			marker = null;
+		};
+
+		const clearSkeleton = () => {
+			if (skeleton) skeleton.remove();
+			skeleton = null;
+		};
+
+		const clearInsertion = () => {
+			clearMarker();
+			clearSkeleton();
+		};
+
+		const placeMarker = (path, label, position, scroll) => {
+			clearMarker();
+			const target = targetFor(path, label);
+			if (!target || !target.parentElement) return;
+			marker = document.createElement("div");
+			marker.className = "reeyai-insert-marker";
+			marker.setAttribute("data-reeyai-place", "");
+			const tag = document.createElement("span");
+			tag.textContent = position === "before" ? "Buradan önce" : "Buradan sonra";
+			marker.appendChild(tag);
+			if (position === "before") target.before(marker);
+			else target.after(marker);
+			if (scroll) target.scrollIntoView({ behavior: "smooth", block: "center" });
+		};
+
+		const placeSkeleton = (path, label, position) => {
+			clearInsertion();
+			const target = targetFor(path, label);
+			skeleton = document.createElement("div");
+			skeleton.className = "reeyai-insert-skeleton";
+			skeleton.setAttribute("data-reeyai-skeleton", "");
+			skeleton.setAttribute("role", "status");
+			skeleton.setAttribute("aria-label", "AI yeni bölüm hazırlıyor");
+			const inner = document.createElement("div");
+			inner.className = "reeyai-insert-skeleton__inner";
+			const spinner = document.createElement("span");
+			spinner.className = "reeyai-insert-skeleton__spinner";
+			const title = document.createElement("span");
+			title.className = "reeyai-insert-skeleton__title";
+			title.textContent = "Yeni bölüm hazırlanıyor";
+			const hint = document.createElement("span");
+			hint.className = "reeyai-insert-skeleton__hint";
+			hint.textContent = "Değişiklik tamamlanınca burada görünecek.";
+			inner.append(spinner, title, hint);
+			skeleton.appendChild(inner);
+			if (!target) {
+				(document.querySelector("main") ?? document.body).appendChild(skeleton);
+				skeleton.scrollIntoView({ behavior: "smooth", block: "center" });
+				return;
+			}
+			if (position === "before") target.before(skeleton);
+			else target.after(skeleton);
+			target.scrollIntoView({ behavior: "smooth", block: "center" });
 		};
 
 		const onMove = (event) => {
@@ -146,6 +228,7 @@
 				event.preventDefault();
 				event.stopPropagation();
 				if (overlay) overlay.style.display = "none";
+				clearMarker();
 				const selection = describe(target);
 				const key = `${selection.path}|${selection.label}`;
 				const existing = picked.get(key);
@@ -208,6 +291,31 @@
 				const element = picked.get(key);
 				if (element) element.removeAttribute("data-reeyai-picked");
 				picked.delete(key);
+				return;
+			}
+			if (data.type === "reeyai:place") {
+				if (typeof data.path === "string") {
+					placeMarker(
+						data.path,
+						typeof data.label === "string" ? data.label : "",
+						data.position === "before" ? "before" : "after",
+						Boolean(data.scroll),
+					);
+				}
+				return;
+			}
+			if (data.type === "reeyai:skeleton") {
+				if (typeof data.path === "string") {
+					placeSkeleton(
+						data.path,
+						typeof data.label === "string" ? data.label : "",
+						data.position === "before" ? "before" : "after",
+					);
+				}
+				return;
+			}
+			if (data.type === "reeyai:skeleton-clear") {
+				clearInsertion();
 				return;
 			}
 			if (data.type === "reeyai:reload") {
