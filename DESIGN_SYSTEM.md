@@ -1,50 +1,52 @@
 # WuppyCMS Site — Design System
 
 Bu dosya **müşteri sitesinin** tasarım sözleşmesidir. Tek doğruluk kaynağı
-`src/styles/global.css` içindeki Tailwind 4 `@theme` token'larıdır. Bu belge
+`src/styles/global.css` içindeki `:root` / `@theme` token'larıdır. Bu belge
 değerleri tekrar tanımlamaz; onları **kullanma biçimini** anlatır.
 
-> **Kural:** Renk/radius/spacing için ham hex, `zinc-*`, `slate-*` gibi hazır
-> paletler veya `style=""` kullanılmaz. Yalnızca token'lardan türeyen
-> utility'ler (`bg-background`, `text-muted-foreground`, `border-border`,
-> `rounded-xl`, `mt-section`…) kullanılır. Etkileşimli primitifler (Button,
-> Badge, Input, Dialog…) **Bejamas UI**'dan gelir; elle yazılmaz.
+Tasarım referansı: `karakas/cantaproje` (Astro + Tailwind 4 + Bejamas UI).
+Endüstriyel, açık zeminli, turuncu vurgulu ve keskin köşeli bir sistem.
+
+> **Kural:** Renk için ham hex, `style=""` veya sistem dışı palet kullanılmaz.
+> Yapısal yüzeyler için belgelenmiş `neutral-*` ölçeği kullanılır; vurgu her
+> zaman `primary` token'ıdır. Etkileşimli primitifler (NavigationMenu,
+> Accordion, Tabs, Carousel, Button) **Bejamas UI**'dan gelir; elle yazılmaz.
 
 ---
 
 ## 1. Token kaynağı
 
 ```
-src/styles/global.css   ← @theme + :root (tek kaynak)
+src/styles/global.css   ← :root + @theme (tek kaynak)
 ```
 
-Token değişikliği yalnız burada yapılır. Bir bileşende yeni renk gerekiyorsa
-önce token eklenir, sonra utility kullanılır. `@theme` dışında custom CSS
-yalnız `@layer base` temel kuralları için yazılır.
+Token değişikliği yalnız burada yapılır. Yeni bir renk gerekiyorsa önce token
+eklenir, sonra utility kullanılır. `@theme` dışında custom CSS yalnız
+`@layer base` temel kuralları ve belgelenmiş bileşen stilleri için yazılır.
 
 ---
 
 ## 2. Renkler
 
-| Token | Değer (oklch) | Kullanım |
+| Token | Değer | Kullanım |
 | --- | --- | --- |
-| `--color-background` | `0.16 0.004 260` | Sayfa zemini |
-| `--color-foreground` | `0.97 0.003 260` | Ana metin |
-| `--color-card` | `0.205 0.005 260` | Kart/panel yüzeyi |
-| `--color-muted` | `0.27 0.005 260` | Sessiz zemin |
-| `--color-muted-foreground` | `0.72 0.005 260` | İkincil metin |
-| `--color-border` | `white / 12%` | Ayraç/kenar |
-| `--color-input` | `white / 16%` | Form kenarı |
-| `--color-primary` | `0.5772 0.2324 260` | Marka mavisi; CTA, link, vurgu |
-| `--color-primary-foreground` | `0.977 0.013 260` | Primary üstü metin |
-| `--color-destructive` | `0.62 0.21 25` | Hata/silme |
+| `--background` | `#ffffff` | Sayfa zemini |
+| `--foreground` / `--ink` | `#111111` | Ana metin, başlık |
+| `--muted` | `#404040` | İkincil metin |
+| `--line` | `#e5e5e5` | Kenar, ayraç |
+| `--primary` | `#dd641e` | Marka turuncusu; CTA, link, vurgu |
+| `--primary-dark` | `#b84d12` | Primary hover |
+| `--navy` | `#111111` | Koyu bant, footer |
+| `--navy-soft` | `#181818` | Koyu yüzey |
+| Emerald | `emerald-600` | Yalnız "Git ile sakla" ikinci sütunu |
 
-Örnek:
+Yapısal yüzeyler: beyaz + `neutral-50/100/200` + `border-neutral-200`.
+Koyu bölüm: `#0d0f10` / `#111415` (CSS'te tanımlı desenlerle).
 
 ```astro
-<section class="rounded-xl border border-border bg-card p-5">
-  <p class="text-xs uppercase tracking-wide text-muted-foreground">Etiket</p>
-  <a class="text-primary hover:underline" href="/blog">Yazı</a>
+<section class="border-y border-neutral-200 bg-white py-20 lg:py-28">
+  <p class="text-xs font-black uppercase tracking-[0.16em] text-primary">Etiket</p>
+  <h2 class="mt-5 text-3xl font-black uppercase tracking-tight text-neutral-950">Başlık</h2>
 </section>
 ```
 
@@ -54,138 +56,167 @@ yalnız `@layer base` temel kuralları için yazılır.
 
 | Alan | Değer |
 | --- | --- |
-| Sans | Sistem sans (`font-sans`); şablonda Inter Variable |
-| Mono | Sistem mono (`font-mono`); şablonda JetBrains Mono Variable |
-| Gövde | `text-base leading-relaxed text-muted-foreground` |
-| Başlık | `text-3xl/4xl font-semibold tracking-tight` |
-| Mikro etiket | `text-xs uppercase tracking-[0.2em]` |
-| Blog gövdesi | `prose prose-invert` (typography plugin) |
+| Font | Space Grotesk Variable, 300–700 (`font-sans`) |
+| Display / başlık | `font-black uppercase tracking-[-0.04em]` |
+| Hero | `clamp`/responsive, 34–44px, `leading-[1.1]` |
+| Bölüm başlığı | `text-3xl sm:text-4xl lg:text-5xl`, `leading-tight` |
+| Gövde | `text-sm sm:text-base leading-relaxed text-neutral-600` |
+| Eyebrow | `text-[11px] font-black uppercase tracking-[0.16em]` |
+| Teknik etiket | `font-mono text-[9px]/[10px] uppercase tracking-[0.14em]` |
+| Buton | `text-[10px]–text-[13px] font-black uppercase tracking-wider` |
+
+Başlıklarda Türkçe karakterler için `uppercase` kullanılır; harf aralığı
+negatif (`-0.03em` … `-0.06em`) tutulur. Uzun başlıklarda `text-balance`
+tercih edilir.
 
 ---
 
 ## 4. Radius
 
-| Utility | Değer | Kullanım |
-| --- | --- | --- |
-| `rounded-sm` | 6px | Küçük rozet/kontrol |
-| `rounded-md` | 8px | Input, küçük buton |
-| `rounded-lg` | 10px | Buton |
-| `rounded-xl` | 14px | Kart, bölüm yüzeyi |
-| `rounded-2xl` | 18px | Büyük medya/hero yüzeyi |
-| `rounded-full` | pill | Badge, avatar |
+Sistem **keskin köşe** üzerine kuruludur:
+
+| Yüzey | Radius |
+| --- | --- |
+| Genel kart, panel, buton, input | `rounded-none` (0) |
+| Carousel kartları | `rounded-[19px]` (referans istisnası) |
+| Pill/rozet, hero trust çipleri | `rounded-full` / `rounded-xl` |
+| Process çekirdeği | `rounded-full` |
+
+Yeni bir bileşende keyfî `rounded-*` kullanılmaz; yukarıdaki istisnalar dışında
+köşeler keskin kalır.
 
 ---
 
-## 5. Spacing
+## 5. Spacing ve layout
 
-Tailwind'in 4px ölçeği (`gap-2`, `p-4`, `mt-8`…) esastır. Anlamsal ekler:
+Tailwind'in 4px ölçeği (`gap-2`, `p-4`, `mt-8`…) esastır.
 
-| Token | Değer | Kullanım |
-| --- | --- | --- |
-| `--spacing-gutter` | 16px (`gap-gutter`, `px-gutter`) | Yatay boşluk |
-| `--spacing-block` | 24px (`mt-block`, `gap-block`) | Bölüm içi blok aralığı |
-| `--spacing-section` | 96px (`py-section`, `mt-section`) | Bölümler arası |
-| `--spacing-hero` | 112px | Hero üst/alt |
+| Alan | Değer |
+| --- | --- |
+| Sayfa kabuğu | `.shell` → `min(90rem, calc(100% - 2.5rem))` |
+| Geniş içerik | `w-[95vw]` (hero) |
+| Bölüm dikey boşluğu | `py-20 lg:py-28` |
+| Yoğun bölüm | `py-16 md:py-24` |
+| Kart içi | `p-5 sm:p-6` / `p-6 sm:p-8` / `p-8 sm:p-10` |
+| Kart arası | `gap-5` / `gap-6` |
+| Başlık–metin | `mt-3` / `mt-4` / `mt-5` |
+| Buton grubu | `flex flex-wrap gap-3` |
 
 Kurallar:
 
-- Bölümler arası: `mt-section` / `py-section`.
-- Kart içi: `p-5`/`p-6`, kartlar arası `gap-4`.
-- Başlık–metin: `mt-3`/`mt-4`.
-- Buton grubu: `flex flex-wrap gap-3`.
+- Her bölümün bir `id`'si ve isteğe bağlı `data-reveal` sarmalayıcısı vardır.
+- Bölüm başlığı: ortalanmış `max-w-4xl` + skew'li etiket + `mt-5` başlık.
+- Teknik bölümlerde `font-mono` etiketler ve numaralı kareler kullanılır.
+- `shell` dışına taşan dekoratif katmanlar `overflow-hidden` ile kırpılır.
 
 ---
 
-## 6. Button — Bejamas UI
+## 6. Butonlar
 
-Kaynak: `src/components/ui/button/` (Bejamas registry portu).
+İki kullanım biçimi vardır:
 
-| Varyant | Kullanım |
+1. **CSS sınıfları** (`global.css`): `.button`, `.button--primary`,
+   `.button--outline-light`, `.text-link`.
+2. **Tailwind CTA** (bölümlerde yaygın):
+
+```astro
+<a class="inline-flex min-h-12 items-center justify-center gap-2 bg-primary px-7 text-xs font-black uppercase tracking-wider text-white transition-colors hover:bg-[#b84d12]">
+  Demo talep et
+</a>
+```
+
+| Varyant | Stil |
 | --- | --- |
-| `default` | Ana CTA; Kumo mavisi degrade, `--button-primary-*` token'ları |
-| `secondary` | İkincil CTA; çerçeveli |
-| `outline` | Nötr eylem |
-| `ghost` | Araç çubuğu/ikon |
-| `destructive` | Silme |
+| Primary | `bg-primary text-white`, hover `#b84d12` veya siyah |
+| Outline | `border-2 border-black text-black`, hover siyah zemin/beyaz metin |
+| Koyu | `bg-neutral-950 text-white`, hover primary |
+| İkincil (Git) | `bg-emerald-600`, hover `emerald-700` |
+| Link | `text-primary`, hover `text-neutral-950` |
 
-Boyutlar: `sm` 32px · `default` 36px · `lg` 40px · `icon*`.
-
-```astro
----
-import { Button } from "../components/ui/button";
----
-<Button as="a" href="#posts">Yazıları oku</Button>
-<Button as="a" href="#about" variant="secondary">Hakkımızda</Button>
-```
-
-Primary buton rengi **yalnız** `--color-primary` ve türevlerinden
-(`--button-primary-grad-top/bottom`, `--button-primary-ring/gloss`) gelir.
+Tüm butonlar en az 44–48px yüksekliğinde, keskin köşeli ve uppercase'dir.
+Primary buton rengi **yalnız** `--primary` token'ından gelir.
 
 ---
 
-## 7. Badge — Bejamas UI
+## 7. Bejamas UI
 
-```astro
----
-import { Badge } from "../components/ui/badge";
----
-<Badge variant="outline" shape="pill">Astro + Tailwind 4</Badge>
-```
+Kurulu primitifler `src/ui/` altındadır:
 
-Varyantlar: `default`, `secondary`, `outline`, `destructive`. Durum/etiket
-için pill biçimi tercih edilir.
+| Bileşen | Dosya |
+| --- | --- |
+| NavigationMenu | `src/ui/navigation-menu/*` |
+| Accordion | `src/ui/accordion/*` |
+| Tabs | `src/ui/tabs/*` |
+| Carousel | `src/ui/carousel/*` |
+| Button | `src/ui/button/*` |
 
----
-
-## 8. Bölüm ve kart deseni
-
-Referans: `src/components/sections/About.astro`
-
-```astro
-<section class="mt-section">
-  <p class="text-xs font-medium uppercase tracking-[0.2em] text-primary">Hakkımızda</p>
-  <h2 class="mt-3 text-3xl font-semibold tracking-tight">Başlık</h2>
-  <p class="mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground">Açıklama</p>
-  <div class="mt-block grid gap-4 sm:grid-cols-3">
-    <div class="rounded-xl border border-border bg-card p-5">…</div>
-  </div>
-</section>
-```
-
-- Bölüm kimliği: `id` + isteğe bağlı `data-reeyai-section`.
-- İçerik hedefi: `data-reeyai-content` / `data-reeyai-field` (CMS element seçici).
-- Kart: `rounded-xl border border-border bg-card p-5`.
-- İkon/medya yüzeyi: `rounded-lg overflow-hidden border border-border`.
+- Yeni primitif: `npx bejamas add <ad>` → `src/ui/<ad>/`.
+- `components.json` alias'ları: `ui → @/ui`, `utils → @/lib/utils`.
+- Elle buton/input/dialog yazılmaz; başka kütüphaneden kopyalanmaz.
+- Kurulu primitif tekrar kurulmaz; stiller Tailwind utility + token'lardır.
 
 ---
 
-## 9. Bejamas UI kuralı
+## 8. Bileşen desenleri
 
-- Yeni primitif: `npx bejamas add <ad>` → `src/components/ui/<ad>/`.
-- Elle buton/input/dialog yazılmaz; shadcn/Radix/Headless UI'dan kopyalanmaz.
-- Kurulu primitif tekrar kurulmaz; `src/components/ui` altındaki kullanılır.
-- Stil Tailwind 4 utility'leri + token'lardır; bileşene gömülü renk yoktur.
+| Bileşen | Dosya | Not |
+| --- | --- | --- |
+| Header | `SiteHeader.astro` | Beyaz nav; scroll > 40px'te siyah sticky; topbar gizlenir |
+| Footer | `SiteFooter.astro` | CTA + siyah footer + turuncu başlıklar |
+| Hero | `pages/index.astro` + `HeroPipeline.astro` | Dot matrix, turuncu vurgu, adım sekmeleri |
+| Feature carousel | `FeatureCarousel.astro` | Bejamas Carousel; 6 kart; 19px radius |
+| İki sütun | `Pillars.astro` | AI (turuncu) + Git (emerald) panelleri |
+| Teknoloji | `SupportedContent.astro` | 8 kart; monospace wordmark |
+| Neden biz | `WhyChooseUs.astro` + `EditorMockup.astro` | 3 sütun + count-up istatistik |
+| Süreç | `ProcessSection.astro` | Koyu bant, metalik çekirdek, 4 adım |
+| Kullanım | `UseCases.astro` | Filtreli numaralı grid |
+| Blog | `LatestPosts.astro`, `pages/blog/*` | Keskin kartlar, turuncu hover |
+| İletişim | `ContactSection.astro` + `ProjectForm.astro` | `mailto:` tabanlı demo formu |
+| SSS | `SiteFaq.astro` | Bejamas Accordion |
+| Floating | `FloatingCta.astro` | Sağ altta turuncu demo CTA |
 
-Mevcut: **Button, Badge**. İhtiyaç doğdukça aynı CLI ile eklenir.
+### Header sticky
+
+`#site-header` üzerinde `data-sticky="true"` + `.is-sticky`; nav
+`group-data-[sticky=true]/header:*` sınıflarıyla siyaha döner. Logo
+`.brand-logo--light` / `.brand-logo--dark` ile değişir. Bu davranışı bozan
+yeni bir header stili eklenmez.
 
 ---
 
-## 10. Erişilebilirlik ve etkileşim
+## 9. Görsel dil
 
-- Odak görünür: Bejamas primitifleri `focus-visible:ring-*` taşır.
-- İkon-only kontrollerde `aria-label` + `title`.
+- **Açık zemin:** beyaz + `neutral-50/100`; koyu bantlar `#0d0f10`.
+- **Turuncu vurgu:** `#dd641e`; geniş alanlarda değil, çizgi/etiket/CTA'da.
+- **Keskin köşe:** kartlar, paneller, butonlar; carousel ve pill istisnaları.
+- **Teknik doku:** dot matrix, ince grid çizgileri, monospace etiketler,
+  numaralı kareler, skew'li siyah/turuncu etiketler.
+- **Hiyerarşi:** küçük uppercase eyebrow → büyük uppercase başlık →
+  `neutral-600` gövde → ince `border-neutral-200` ayraç.
+- **Hareket:** scroll reveal (`data-reveal`), carousel scroll, sticky header;
+  `prefers-reduced-motion` desteklenir.
+
+---
+
+## 10. Erişilebilirlik
+
+- Odak görünür: `focus-visible:ring-*` / `focus-visible:outline-*`.
+- İkon-only kontrollerde `aria-label`.
 - Renk tek başına anlam taşımaz; metin/ikonla desteklenir.
-- `scroll-behavior: smooth` base katmanındadır; hareket azaltma tercihinde
-  tarayıcı davranışı korunur.
-- Metin kontrastı: `text-foreground` / `text-muted-foreground`; primary üzerinde
-  `text-primary-foreground`.
+- Kontrast: `text-neutral-950` / `text-neutral-600`; primary üzerinde beyaz.
+- Formlarda `label`, `required`, `autocomplete` ve hata durumu.
+- `prefers-reduced-motion` altında animasyonlar kapanır.
 
 ---
 
 ## 11. Yapılmaması gerekenler
 
-- `bg-zinc-950`, `text-gray-400`, `border-slate-800` gibi ham paletler.
-- `style="color: #..."`, bileşen içi `<style>` (yalnız `global.css` istisna).
-- Bölüm aralıklarını `mt-[73px]` gibi keyfî değerlerle vermek; `mt-section` kullan.
-- Aynı görsel işi yapan yeni bir buton/kart primitifi yazmak.
-- Token'ı atlayıp degrade/renk uydurmak.
+- Eski koyu Kumo temasını (`bg-zinc-950`, mavi primary, yumuşak radius)
+  site şablonuna geri getirmek.
+- `bg-zinc-*`, `text-slate-*` gibi sistem dışı paletler.
+- `style="color: #..."`, bileşen içi keyfî `<style>` (yalnız global.css).
+- Bölüm aralıklarını `mt-[73px]` gibi keyfî değerlerle vermek.
+- Aynı işi yapan yeni buton/kart/navigasyon primitifi yazmak.
+- Carousel/pill istisnaları dışında `rounded-*` kullanmak.
+- Header sticky davranışını, `data-reeyai-*` içerik hedeflerini veya
+  `ReeyaiBridge`'i kaldırmak.
