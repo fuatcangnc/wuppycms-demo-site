@@ -6,7 +6,7 @@ export const siteSettings = {
 	email: "merhaba@wuppycms.dev",
 	location: "İstanbul, Türkiye",
 	workHours: "Hafta içi 09:00 – 18:00",
-	github: "https://github.com/reeyai",
+	github: "https://github.com/fuatcangnc/reeyai-demo-site",
 };
 
 export const navItems = [
