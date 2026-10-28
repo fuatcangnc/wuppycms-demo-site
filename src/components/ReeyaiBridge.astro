@@ -221,7 +221,7 @@
 				const currentTitle = document.title;
 				let nextDoc = null;
 				let nextMain = null;
-				for (let attempt = 0; attempt < 8; attempt += 1) {
+				for (let attempt = 0; attempt < 10; attempt += 1) {
 					const res = await fetch(location.href, { cache: "no-store", credentials: "same-origin" });
 					if (!res.ok) throw new Error("fetch");
 					nextDoc = new DOMParser().parseFromString(await res.text(), "text/html");
