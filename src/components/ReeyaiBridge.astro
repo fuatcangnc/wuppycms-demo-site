@@ -173,7 +173,7 @@
 			if (scroll) target.scrollIntoView({ behavior: "smooth", block: "center" });
 		};
 
-		const placeSkeleton = (path, label, position) => {
+		const placeSkeleton = (path, label, position, message) => {
 			clearInsertion();
 			const target = targetFor(path, label);
 			skeleton = document.createElement("div");
@@ -187,7 +187,7 @@
 			spinner.className = "reeyai-insert-skeleton__spinner";
 			const title = document.createElement("span");
 			title.className = "reeyai-insert-skeleton__title";
-			title.textContent = "Yeni bölüm hazırlanıyor";
+			title.textContent = typeof message === "string" && message.trim() ? message : "Yeni bölüm hazırlanıyor";
 			const hint = document.createElement("span");
 			hint.className = "reeyai-insert-skeleton__hint";
 			hint.textContent = "Değişiklik tamamlanınca burada görünecek.";
@@ -310,6 +310,7 @@
 						data.path,
 						typeof data.label === "string" ? data.label : "",
 						data.position === "before" ? "before" : "after",
+						typeof data.message === "string" ? data.message : "",
 					);
 				}
 				return;
