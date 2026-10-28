@@ -183,6 +183,33 @@ export const stats = [
 	{ target: 24, suffix: "/7", label: "AI EDITÖR", description: "Doğal dille üretim." },
 ];
 
+export const numberFacts = [
+	{
+		target: 2,
+		suffix: " dk",
+		label: "KURULUM",
+		description: "Repo bağlanır, şema taranır, panel hazır.",
+	},
+	{
+		target: 100,
+		suffix: "%",
+		label: "GIT GEÇMİŞİ",
+		description: "Her düzenleme gerçek bir commit.",
+	},
+	{
+		target: 12,
+		suffix: "+",
+		label: "İÇERİK ALANI",
+		description: "Sayfa, blog, yazar ve medya.",
+	},
+	{
+		target: 0,
+		suffix: "",
+		label: "VERİTABANI KİLİDİ",
+		description: "İçerik markdown olarak repoda.",
+	},
+];
+
 export const processSteps = [
 	{
 		number: "01",
