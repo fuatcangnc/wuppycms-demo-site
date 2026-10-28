@@ -43,25 +43,65 @@ import { faqs, siteSettings } from "@/data/site";
 			</Accordion>
 		</div>
 
-		<div class="mt-12 border border-neutral-200 bg-neutral-50/70 p-6 sm:p-8" data-reveal>
-			<div class="flex flex-col justify-between gap-6 sm:flex-row sm:items-center">
-				<div>
-					<span class="inline-block text-[11px] font-black uppercase tracking-wider text-primary">Doğrudan destek</span>
-					<h3 class="mt-1 text-xl font-black uppercase tracking-tight text-neutral-950 sm:text-2xl">
-						Başka sorunuz mu var?
-					</h3>
-					<p class="mt-1.5 max-w-2xl text-xs leading-relaxed text-neutral-600 sm:text-sm">
-						Reponuzu veya aklınıza takılan soruyu e-posta ile iletin; demo kapsamını birlikte netleştirelim.
-					</p>
+				<div class="mt-12 border border-neutral-200 bg-neutral-50/70 p-6 sm:p-8" data-reveal>
+			<div class="grid gap-8 lg:grid-cols-2 lg:gap-10">
+				<div class="flex flex-col justify-between gap-6">
+					<div>
+						<span class="inline-block text-[11px] font-black uppercase tracking-wider text-primary">Doğrudan destek</span>
+						<h3 class="mt-1 text-xl font-black uppercase tracking-tight text-neutral-950 sm:text-2xl">
+							Başka sorunuz mu var?
+						</h3>
+						<p class="mt-1.5 max-w-2xl text-xs leading-relaxed text-neutral-600 sm:text-sm">
+							Reponuzu veya aklınıza takılan soruyu e-posta ile iletin; demo kapsamını birlikte netleştirelim.
+						</p>
+					</div>
+
+					<a
+						href={`mailto:${siteSettings.email}?subject=WuppyCMS%20sorusu`}
+						class="group inline-flex w-fit shrink-0 items-center justify-center gap-3 bg-primary px-8 py-4 text-xs font-black uppercase tracking-wider text-white shadow-lg shadow-primary/25 transition-all duration-200 hover:scale-[1.02] hover:bg-[#b84d12] sm:text-[13px]"
+					>
+						<Mail class="size-5 shrink-0" />
+						<span>E-posta gönder</span>
+						<ArrowRight size={16} class="transition-transform group-hover:translate-x-1" />
+					</a>
 				</div>
-				<a
-					href={`mailto:${siteSettings.email}?subject=WuppyCMS%20sorusu`}
-					class="group inline-flex shrink-0 items-center justify-center gap-3 bg-primary px-8 py-4 text-xs font-black uppercase tracking-wider text-white shadow-lg shadow-primary/25 transition-all duration-200 hover:scale-[1.02] hover:bg-[#b84d12] sm:text-[13px]"
-				>
-					<Mail class="size-5 shrink-0" />
-					<span>E-posta gönder</span>
-					<ArrowRight size={16} class="transition-transform group-hover:translate-x-1" />
-				</a>
+
+				<div class="flex flex-col gap-4">
+					<iframe
+						title={`${siteSettings.brandName} konum haritası`}
+						src={`https://maps.google.com/maps?q=${encodeURIComponent(siteSettings.location)}&z=13&output=embed`}
+						class="h-56 w-full border border-neutral-200 grayscale transition-all duration-300 hover:grayscale-0 sm:h-64"
+						loading="lazy"
+						referrerpolicy="no-referrer-when-downgrade"
+						allowfullscreen></iframe>
+
+					<ul class="grid grid-cols-1 divide-y divide-neutral-200 border border-neutral-200 bg-white sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+						<li class="flex items-start gap-2.5 p-4">
+							<Mail class="mt-0.5 size-4 shrink-0 text-primary" />
+							<div class="min-w-0">
+								<span class="block font-mono text-[9px] uppercase tracking-[0.14em] text-neutral-500">E-posta</span>
+								<a
+									href={`mailto:${siteSettings.email}`}
+									class="block truncate text-xs font-black text-neutral-950 transition-colors hover:text-primary">{siteSettings.email}</a
+								>
+							</div>
+						</li>
+						<li class="flex items-start gap-2.5 p-4">
+							<MapPin class="mt-0.5 size-4 shrink-0 text-primary" />
+							<div class="min-w-0">
+								<span class="block font-mono text-[9px] uppercase tracking-[0.14em] text-neutral-500">Konum</span>
+								<span class="block text-xs font-black text-neutral-950">{siteSettings.location}</span>
+							</div>
+						</li>
+						<li class="flex items-start gap-2.5 p-4">
+							<Clock3 class="mt-0.5 size-4 shrink-0 text-primary" />
+							<div class="min-w-0">
+								<span class="block font-mono text-[9px] uppercase tracking-[0.14em] text-neutral-500">Çalışma saatleri</span>
+								<span class="block text-xs font-black text-neutral-950">{siteSettings.workHours}</span>
+							</div>
+						</li>
+					</ul>
+				</div>
 			</div>
 		</div>
 	</div>
