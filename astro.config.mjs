@@ -42,7 +42,7 @@ export default defineConfig({
 		mdx(),
 		icon({
 			include: {
-				lucide: ["mail", "map-pin", "clock-3", "arrow-right", "check"],
+				lucide: ["mail", "map-pin", "clock-3", "arrow-right", "check", "phone"],
 				"simple-icons": ["github", "x", "linkedin", "whatsapp"],
 			},
 		}),
