@@ -14,9 +14,11 @@ import {
 } from "@/ui/navigation-menu";
 
 const isActive = (href: string) => {
-	const path = href.split("#")[0] || "/";
-	if (path === "/") return Astro.url.pathname === "/";
-	return Astro.url.pathname === path || Astro.url.pathname.startsWith(`${path}/`);
+	// Anchor bağlantıları (/#ozellikler gibi) sayfa yüklendiğinde aktif sayılmaz;
+	// aksi halde ana sayfada birden fazla menü öğesi altı çizili görünür.
+	if (href.includes("#")) return false;
+	if (href === "/") return Astro.url.pathname === "/";
+	return Astro.url.pathname === href || Astro.url.pathname.startsWith(`${href}/`);
 };
 ---
 
