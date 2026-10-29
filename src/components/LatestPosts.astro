@@ -68,17 +68,17 @@ const tones = ["dark", "orange", "light"] as const;
 									</div>
 								</div>
 							</a>
-							<div class="flex flex-1 flex-col p-5 sm:p-6" data-reeyai-content={JSON.stringify({ collection: "blog", slug: post.id })}>
+							<div class="flex flex-1 flex-col p-5 sm:p-6" data-wuppycms-content={JSON.stringify({ collection: "blog", slug: post.id })}>
 								<div class="flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider">
 									<span class="bg-primary/10 px-2 py-0.5 text-primary">{tag}</span>
 								</div>
 								<h3
 									class="mt-3 text-base font-black leading-tight text-neutral-950 transition-colors group-hover:text-primary sm:text-lg"
-									data-reeyai-field="title"
+									data-wuppycms-field="title"
 								>
 									<a href={`/blog/${post.id}`}>{post.data.title}</a>
 								</h3>
-								<p class="mt-2 line-clamp-3 text-sm leading-relaxed text-neutral-600" data-reeyai-field="description">
+								<p class="mt-2 line-clamp-3 text-sm leading-relaxed text-neutral-600" data-wuppycms-field="description">
 									{post.data.description}
 								</p>
 								<div class="mt-auto flex items-center justify-between pt-4 text-[11px] text-neutral-500">

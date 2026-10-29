@@ -4,7 +4,7 @@ import { Font } from "astro:assets";
 import SiteHeader from "@/components/SiteHeader.astro";
 import SiteFooter from "@/components/SiteFooter.astro";
 import FloatingCta from "@/components/FloatingCta.astro";
-import ReeyaiBridge from "@/components/ReeyaiBridge.astro";
+import WuppycmsBridge from "@/components/WuppycmsBridge.astro";
 import { siteSettings } from "@/data/site";
 
 interface Props {
@@ -60,7 +60,7 @@ const ogImage = image ? new URL(image, Astro.url.origin).href : undefined;
 		<slot />
 		<SiteFooter />
 		<FloatingCta />
-		<ReeyaiBridge />
+		<WuppycmsBridge />
 
 		<script is:inline>
 			(function () {

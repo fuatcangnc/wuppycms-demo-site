@@ -2,16 +2,16 @@
 // WuppyCMS önizleme köprüsü (ADR 0008).
 //
 // Bu betik yalnızca sayfa bir üst pencereye gömülüyken ve üst pencere
-// `reeyai:hello` gönderdiğinde etkinleşir. Normal ziyaretçi için hiçbir şey
+// `wuppycms:hello` gönderdiğinde etkinleşir. Normal ziyaretçi için hiçbir şey
 // yapmaz: dinleyici yok, görünür katman yok, veri gönderimi yok.
 //
 // Protokol (postMessage):
-//   parent → site : reeyai:hello | reeyai:pick-mode {on} | reeyai:unpick {path,label}
-//                   reeyai:place {path,label,position,scroll} | reeyai:skeleton {path,label,position}
-//                   reeyai:skeleton-clear | reeyai:soft-refresh {path,requestId}
-//                   reeyai:reload | reeyai:back | reeyai:forward
-//   site → parent : reeyai:ready | reeyai:pick {selection} | reeyai:page {path,title}
-//                   reeyai:navigate {href}
+//   parent → site : wuppycms:hello | wuppycms:pick-mode {on} | wuppycms:unpick {path,label}
+//                   wuppycms:place {path,label,position,scroll} | wuppycms:skeleton {path,label,position}
+//                   wuppycms:skeleton-clear | wuppycms:soft-refresh {path,requestId}
+//                   wuppycms:reload | wuppycms:back | wuppycms:forward
+//   site → parent : wuppycms:ready | wuppycms:pick {selection} | wuppycms:page {path,title}
+//                   wuppycms:navigate {href}
 ---
 
 <script is:inline>
@@ -222,7 +222,7 @@
 		};
 
 		const softRefresh = async (path, requestId) => {
-			const ack = (ok) => post({ type: "reeyai:soft-refreshed", requestId, ok: Boolean(ok) });
+			const ack = (ok) => post({ type: "wuppycms:soft-refreshed", requestId, ok: Boolean(ok) });
 			try {
 				const currentMain = document.querySelector("main");
 				if (!currentMain) throw new Error("no-main");
@@ -329,7 +329,7 @@
 				if (existing && existing.isConnected) existing.removeAttribute("data-wuppycms-picked");
 				target.setAttribute("data-wuppycms-picked", "");
 				picked.set(key, target);
-				post({ type: "reeyai:pick", selection, additive });
+				post({ type: "wuppycms:pick", selection, additive });
 				return;
 			}
 
@@ -341,7 +341,7 @@
 			event.preventDefault();
 			event.stopPropagation();
 			try {
-				post({ type: "reeyai:navigate", href: new URL(href, location.href).toString() });
+				post({ type: "wuppycms:navigate", href: new URL(href, location.href).toString() });
 			} catch {
 				// geçersiz URL
 			}
@@ -352,31 +352,31 @@
 			const data = event.data;
 			if (!data || typeof data.type !== "string") return;
 
-			if (data.type === "reeyai:hello") {
+			if (data.type === "wuppycms:hello") {
 				ensureOverlay();
 				if (!active) {
 					document.addEventListener("mousemove", onMove, true);
 					document.addEventListener("click", onClick, true);
 					active = true;
 				}
-				post({ type: "reeyai:ready", capabilities: { softRefresh: true, skeleton: true } });
-				post({ type: "reeyai:page", path: location.pathname, title: document.title });
+				post({ type: "wuppycms:ready", capabilities: { softRefresh: true, skeleton: true } });
+				post({ type: "wuppycms:page", path: location.pathname, title: document.title });
 				return;
 			}
-			if (data.type === "reeyai:pick-mode") {
+			if (data.type === "wuppycms:pick-mode") {
 				picking = Boolean(data.on);
 				document.documentElement.classList.toggle("wuppycms-picking", picking);
 				if (!picking && overlay) overlay.style.display = "none";
 				return;
 			}
-			if (data.type === "reeyai:unpick") {
+			if (data.type === "wuppycms:unpick") {
 				const key = `${data.path}|${data.label}`;
 				const element = picked.get(key);
 				if (element) element.removeAttribute("data-wuppycms-picked");
 				picked.delete(key);
 				return;
 			}
-			if (data.type === "reeyai:place") {
+			if (data.type === "wuppycms:place") {
 				if (typeof data.path === "string") {
 					placeMarker(
 						data.path,
@@ -387,7 +387,7 @@
 				}
 				return;
 			}
-			if (data.type === "reeyai:skeleton") {
+			if (data.type === "wuppycms:skeleton") {
 				if (typeof data.path === "string") {
 					placeSkeleton(
 						data.path,
@@ -398,23 +398,23 @@
 				}
 				return;
 			}
-			if (data.type === "reeyai:skeleton-clear") {
+			if (data.type === "wuppycms:skeleton-clear") {
 				clearInsertion();
 				return;
 			}
-			if (data.type === "reeyai:soft-refresh") {
+			if (data.type === "wuppycms:soft-refresh") {
 				void softRefresh(typeof data.path === "string" ? data.path : null, data.requestId);
 				return;
 			}
-			if (data.type === "reeyai:reload") {
+			if (data.type === "wuppycms:reload") {
 				location.reload();
 				return;
 			}
-			if (data.type === "reeyai:back") {
+			if (data.type === "wuppycms:back") {
 				history.back();
 				return;
 			}
-			if (data.type === "reeyai:forward") {
+			if (data.type === "wuppycms:forward") {
 				history.forward();
 			}
 		};

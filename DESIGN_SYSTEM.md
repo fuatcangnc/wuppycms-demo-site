@@ -218,5 +218,5 @@ yeni bir header stili eklenmez.
 - Bölüm aralıklarını `mt-[73px]` gibi keyfî değerlerle vermek.
 - Aynı işi yapan yeni buton/kart/navigasyon primitifi yazmak.
 - Carousel/pill istisnaları dışında `rounded-*` kullanmak.
-- Header sticky davranışını, `data-reeyai-*` içerik hedeflerini veya
-  `ReeyaiBridge`'i kaldırmak.
+- Header sticky davranışını, `data-wuppycms-*` içerik hedeflerini veya
+  `WuppycmsBridge`'i kaldırmak.

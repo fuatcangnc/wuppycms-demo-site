@@ -32,7 +32,7 @@ const fonts = [
 	},
 ];
 
-const previewMode = process.env.REEYAI_PREVIEW === "1";
+const previewMode = process.env.WUPPYCMS_PREVIEW === "1";
 
 export default defineConfig({
 	devToolbar: { enabled: false },

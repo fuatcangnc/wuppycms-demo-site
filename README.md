@@ -18,7 +18,7 @@ primitifler `src/ui` altındaki Bejamas portlarıdır.
 | `src/pages/index.astro` | Landing: hero, özellikler, süreç, blog, iletişim |
 | `src/pages/blog/*` | Blog indeksi ve makale şablonu |
 | `src/ui/*` | Bejamas UI primitifleri (NavigationMenu, Accordion, Tabs, Carousel) |
-| `.reeyai/sites.jsonc` | Site tanımları (CMS buradan okur) |
+| `.wuppycms/sites.jsonc` | Site tanımları (CMS buradan okur) |
 | `.github/workflows/build.yml` | CI: her push'ta `pnpm build` |
 
 ## Geliştirme

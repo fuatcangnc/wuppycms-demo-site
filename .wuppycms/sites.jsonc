@@ -3,7 +3,7 @@
   "sites": [
     {
       "key": "root",
-      "name": "demo.reeyai.site",
+      "name": "demo.wuppycms.site",
       "url": "http://localhost:4324",
       "media": "public",
       "publishing": "review",
