@@ -6,7 +6,7 @@ export const siteSettings = {
 	email: "merhaba@wuppycms.dev",
 	location: "İstanbul, Türkiye",
 	workHours: "Hafta içi 09:00 – 18:00",
-		github: "https://github.com/fuatcangnc/reeyai-demo-site",
+		github: "https://github.com/fuatcangnc/wuppycms-demo-site",
 	whatsapp: "https://wa.me/905000000000",
 };
 
